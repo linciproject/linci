@@ -4,8 +4,6 @@
 from setuptools import setup
 import linciclient
 
-scripts = []
-
 setup_args = {
     'name': "linciclient",
     'version': linciclient.__version__,
@@ -25,11 +23,17 @@ setup_args = {
         'Topic :: Software Development :: Build Tools',
         'Topic :: Software Development :: Testing',
     ],
-
     'packages': [
         "linciclient",
     ],
-    'scripts': scripts,
+    'entry_points' : {
+        'console_scripts': [
+            'linci_client_config = linciclient.config:main',
+            'linci_arti_open = linciclient.artifact.open:main',
+            'linci_arti_upload = linciclient.artifact.upload:main',
+            'linci_arti_close = linciclient.artifact.close:main',
+        ],
+    },
 }
 
 setup(**setup_args)
