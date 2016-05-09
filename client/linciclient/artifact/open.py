@@ -16,6 +16,7 @@ class LinciArtifactClient(LinciClient):
         parser = OptionParser()
         parser.add_option('--context-file', dest='context_file', default='.linci_artifact_context', help='context file path for linci artifact operation, default is .linci_artifact_context')
         parser.add_option('--new','-n', dest='new', default=False, action='store_true', help='create new artifact')
+        parser.add_option('--type','-t', dest='type', default='default', help='artifact type for new artifact')
         parser.add_option('--artifact-id','--aid', dest='artifact_id', default=None, help='artifact id of which to open')
 
         self.options, args = parser.parse_args()
@@ -40,6 +41,7 @@ class LinciArtifactClient(LinciClient):
                 except ValueError as e:
                     log.error("wrong artifact id: %s, should be 'ASITE-AINDEX', AINDEX should be integer, for example 'EXAMPLE-1'"%(self.options.artifact_id))
                     _exit(ERR_BAD_PARAM)
+            data["atype"]=self.options.type
 
             r = self.request_post("linci/artifact/api_new",data=data)
             if r.status_code==200:
