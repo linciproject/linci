@@ -56,11 +56,11 @@ class LinciClient(object):
         with open(self.client_conf_fpath, 'wb') as f:
             json.dump(self.config,f,indent=2)
 
-    def request_post(self,uri,data={},files=None):
+    def request_post(self,uri,data={},files=None,stream=False):
         if not self._server_url:
             raise ConfigError("no server url, you should linci_client_config --server-url=SERVER_URL")
         url = urljoin(self._server_url,uri)
-        return self._session.post(url,data=data,cookies=self.config.get("cookies",{}),files=files)
+        return self._session.post(url,data=data,cookies=self.config.get("cookies",{}),files=files,stream=stream)
 
     def make_sure_login(self):
         r = self.request_post("apiuser/api_get_auth")
