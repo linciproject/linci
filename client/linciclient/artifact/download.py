@@ -36,6 +36,7 @@ class LinciArtifactClient(LinciClient):
         parser.add_option('--basepath','-b', dest='basepath', default='.', help='base path for files')
         parser.add_option('--include', '-i', dest='include', default=None, action='callback', callback=cb, help='include pattern')
         parser.add_option('--exclude', '-e', dest='exclude', default=None, action='callback', callback=cb, help='exclude pattern')
+        parser.add_option('--dry', dest='dry', default=False, action='store_true', help='dry run')
 
         options, args = parser.parse_args()
 
@@ -102,25 +103,27 @@ class LinciArtifactClient(LinciClient):
                         sys.exit(ERR_NOT_DIRECTORY)
                 else:
                     log.info("make dir: %s"%(dpath))
-                    os.makedirs(dpath)
-                r = self.request_post("linci/artifact/api_artifactfile_download",
-                    data={"id":id_},
-                    stream=True
-                )
-                if r.status_code != 200:
-                    rjson = r.json()
-                    log.error("artifact %s fail to download, message: %s"%(aid,rjson.get("msg")))
-                    sys.exit(ERR_API_FAIL)
+                    if not options.dry:
+                        os.makedirs(dpath)
+                if not options.dry:
+                    r = self.request_post("linci/artifact/api_artifactfile_download",
+                        data={"id":id_},
+                        stream=True
+                    )
+                    if r.status_code != 200:
+                        rjson = r.json()
+                        log.error("artifact %s fail to download, message: %s"%(aid,rjson.get("msg")))
+                        sys.exit(ERR_API_FAIL)
 
-                with open(fpath,"wb") as f:
-                    large_file = False
-                    for c in r.iter_content(chunk_size = CHUNK_SIZE):
-                        if len(c)==CHUNK_SIZE:
-                            large_file = True
-                            print ".",
-                        f.write(c)
-                    if large_file:
-                        print
+                    with open(fpath,"wb") as f:
+                        large_file = False
+                        for c in r.iter_content(chunk_size = CHUNK_SIZE):
+                            if len(c)==CHUNK_SIZE:
+                                large_file = True
+                                sys.stdout.write(".")
+                            f.write(c)
+                        if large_file:
+                            print
         log.info("artifact %s download successfully, message: %s"%(aid,rjson.get("msg")))
 def main():
     c = LinciArtifactClient()

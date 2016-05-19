@@ -25,7 +25,7 @@ class LinciArtifactClient(LinciClient):
             log.error("err: not open an artifact yet")
             sys.exit(ERR_BAD_PARAM)
 
-        ready = options.value.lower()=='true'
+        ready = options.value.lower()
         r = self.request_post("linci/artifact/api_set_ready",
             data={"aid":self.context["aid"],"ready":ready},
         )
