@@ -35,6 +35,7 @@ setup_args = {
             'linci_arti_fix = linciclient.artifact.fix:main',
             'linci_arti_download = linciclient.artifact.download:main',
             'linci_arti_close = linciclient.artifact.close:main',
+            'linci_worker = linciclient.worker:main',
         ],
     },
 }
